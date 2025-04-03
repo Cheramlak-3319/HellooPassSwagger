@@ -1,16 +1,102 @@
 openapi: 3.0.3
 info:
   title: HellOOpass API documentation
-
+  description: API documentation for HellOOpass platform with JWT authentication
   version: 1.0.11
 servers:
   - url: https://helloomarket.com/api
+    description: Production server
+  - url: http://localhost:5000
+    description: Local development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from the /authenticate endpoint
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Error description"
+    SuccessResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Success message"
+    AuthRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: "admin"
+        password:
+          type: string
+          example: "admin123"
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3RhdHVzIjoidmFsaWQiLCJpYXQiOjE2MTYyMzkwMjJ9.1q2w3e4r5t6y7u8i9o0p"
+security:
+- bearerAuth: []
 tags:
+  - name: Authentication
+    description: Endpoints for user authentication
   - name: Dube International
-    description: ""
+    description: Merchant and customer management
   - name: WFP
-    description: ''
+    description: World Food Programme related operations
+
 paths:
+  /authenticate:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate user
+      description: Returns a JWT token for authenticated users
+      operationId: authenticateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      # Remove security for authentication endpoint
+      security: []      
   /dube/international/getmerchantlist.php:
     get:
       tags:
@@ -2904,25 +2990,6 @@ paths:
                               allocatedAmount:
                                 type: string
                                 example: "78.75"
-                    example:
-                    - id: "1a723e53-9491-c7ee-e411-670fac008a36"
-                      name: "Vegetables"
-                      allocatedAmount: "79.20"
-                    - id: "11b5cf1c-eda5-0a68-7cd0-675c1b485a8"
-                      name: "1aa3bc29-2249-5ed4-b366-67acf9a02ce0"
-                      allocatedAmount: "78.50"
-                    - walletName: "Vegetables"
-                      name: "Oil"
-                      allocatedAmount: "121.92"
-                    - walletName: "Cereal"
-                      name: "Cereal"
-                      allocatedAmount: "112.43"
-                    - walletName: "Pulses"
-                      name: "Eggs"
-                      allocatedAmount: "543.29"
-                    - walletName: "Salt"
-                      name: "Pulses"
-                      allocatedAmount: "367.92"
         "400":
             description: Bad request. The provided data is invalid or missing required fields.
             content:
@@ -2953,11 +3020,11 @@ paths:
     get:
       tags:
         - WFP
-      summary: Get Categories
-      description: Get All Categories
+      summary: Get Beneficiary list
+      description: Get All Beneficiary list
       responses:
         '200':
-          description: A JSON array of user names
+          description: Successful response with Beneficiary list.
           content:
             application/json:
               schema:
@@ -3000,25 +3067,25 @@ paths:
                               cycle:
                                 type: string
                                 example: "Test Cycle-2"
-                    example:
-                    - walletName: "Oil"
-                      walletBalance: "100.00"
-                      cycle: "Test Cycle-2"
-                    - walletName: "Eggs"
-                      walletBalance: "100.00"
-                      cycle: "Test Cycle-2"
-                    - walletName: "Vegetables"
-                      walletBalance: "100.00"
-                      cycle: "Test Cycle-2"
-                    - walletName: "Cereal"
-                      walletBalance: "100.00"
-                      cycle: "Test Cycle-2"
-                    - walletName: "Pulses"
-                      walletBalance: "100.00"
-                      cycle: "Test Cycle-2"
-                    - walletName: "Salt"
-                      walletBalance: "100.00"
-                      cycle: "Test Cycle-2"
+                          example:
+                          - walletName: "Oil"
+                            walletBalance: "100.00"
+                            cycle: "Test Cycle-2"
+                          - walletName: "Eggs"
+                            walletBalance: "100.00"
+                            cycle: "Test Cycle-2"
+                          - walletName: "Vegetables"
+                            walletBalance: "100.00"
+                            cycle: "Test Cycle-2"
+                          - walletName: "Cereal"
+                            walletBalance: "100.00"
+                            cycle: "Test Cycle-2"
+                          - walletName: "Pulses"
+                            walletBalance: "100.00"
+                            cycle: "Test Cycle-2"
+                          - walletName: "Salt"
+                            walletBalance: "100.00"
+                            cycle: "Test Cycle-2"
         "400":
             description: Bad request. The provided data is invalid or missing required fields.
             content:
@@ -3053,7 +3120,7 @@ paths:
       description: Get All Vouchers List
       responses:
         '200':
-          description: A JSON array of user names
+          description: Successful response with Vouchers List.
           content:
             application/json:
               schema:
@@ -3418,42 +3485,42 @@ paths:
       summary: Fetch Cashouts
       description: Retrieves cashout transactions with optional filters
       parameters:
-        - name: limit
+        - name: voucher
           in: query
+          description: Voucher code or ID
+          required: false
           schema:
-            type: integer
-          description: Number of results per page.
+            type: string
         - name: offset
           in: query
+          description: Pagination offset
+          required: false
           schema:
             type: integer
-          description: Pagination offset.
-        - in: query
-          name: wallet
-          description: |
-            Wallet identifier or type
-            - Example: `"1234567890"` for a specific wallet, or lefting empty for for all wallets.
+            default: 0
+        - name: dateFrom
+          in: query
+          description: Start date filter (YYYY-MM-DD)
           required: false
           schema:
             type: string
-        - in: query
-          name: start
-          description: |
-            Start date or parameter for filtering
-            - Example: `"2024-01-01"`
+            format: date
+            nullable: true
+        - name: dateTo
+          in: query
+          description: End date filter (YYYY-MM-DD)
           required: false
           schema:
             type: string
-            format: date-time
-        - in: query
-          name: end
-          description: |
-            End date or parameter for filtering
-            - Example: `"2024-12-31"`
+            format: date
+            nullable: true
+        - name: limit
+          in: query
+          description: Number of records per page
           required: false
           schema:
-            type: string
-            format: date-time
+            type: integer
+            default: 10
       responses:
         '200':
           description: A JSON array of user names
@@ -3602,44 +3669,41 @@ paths:
       summary: Fetch Credit Transfer History
       description: Retrieves credit transfer history with optional filters.
       parameters:
-        - name: limit
+        - name: walletId
           in: query
           schema:
-            type: integer
-          description: Number of results per page.
+            type: string
+          description: Unique ID of the wallet.
         - name: offset
           in: query
           schema:
             type: integer
           description: Pagination offset.
-        - name: customerWallet
+        - name: houseHoldId
           in: query
           schema:
             type: string
-          description: Wallet ID filter.
+          description: Unique ID of the household.
         - name: householdId
           in: query
           schema:
             type: string
           description: Household ID filter.
-        - in: query
-          name: start
-          description: |
-            Start date or parameter for filtering
-            - Example: `"2024-01-01"`
+        - name: dateTo
+          in: query
+          description: End date filter (YYYY-MM-DD)
           required: false
           schema:
             type: string
-            format: date-time
-        - in: query
-          name: end
-          description: |
-            End date or parameter for filtering
-            - Example: `"2024-12-31"`
+            format: date
+            nullable: true
+        - name: limit
+          in: query
+          description: Number of records per page
           required: false
           schema:
-            type: string
-            format: date-time
+            type: integer
+            default: 10
         - name: cycle
           in: query
           schema:
@@ -3685,9 +3749,6 @@ paths:
                         transactionDate:
                           type: string
                           example: "1000"
-                        status:
-                          type: string
-                          example: "1"
                         transactionData:
                           type: string
                           example: "1000"
@@ -3750,16 +3811,16 @@ paths:
                       properties:
                         name:
                           type: string
-                          example: "1"
+                          example: "hello shop"
                         mobile:
                           type: string
-                          example: "Snacks"
+                          example: "251900000000"
                         active:
                           type: string
-                          example: "1000"
+                          example: "1"
                         registeredOn:
                           type: string
-                          example: "1000"
+                          example: "2024-01-01"
         "400":
             description: Bad request. The provided data is invalid or missing required fields.
             content:
@@ -3920,16 +3981,16 @@ paths:
                       properties:
                         name:
                           type: string
-                          example: "1"
+                          example: "hello shop"
                         mobile:
                           type: string
-                          example: "Snacks"
+                          example: "251900000000"
                         active:
                           type: string
-                          example: "1000"
+                          example: "1"
                         registeredOn:
                           type: string
-                          example: "1000"
+                          example: "2024-01-01"
         "400":
             description: Bad request. The provided data is invalid or missing required fields.
             content:
@@ -4251,6 +4312,363 @@ paths:
                     message:
                       type: string
                       example: "Resource created successfully."
+          "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+          "500":
+            description: Internal server error. An unexpected error occurred on the server.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "An internal server error occurred."
+  /wfp/registeronboardingagents.php:
+    post:
+      tags:
+        - WFP
+      summary: Register Onboarding Agent
+      description: Create Onboarding Agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - agentName
+                - agentMobile
+              properties:
+                agentName:
+                  type: string
+                  example: "John Doe"
+                agentMobile:
+                  type: array
+                  formate: date-time
+      responses:
+          "201":
+            description: Resource Created successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Resource created successfully."
+          "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+          "500":
+            description: Internal server error. An unexpected error occurred on the server.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "An internal server error occurred."
+  /wfp/updateonboardingagent.php:
+    post:
+      tags:
+        - WFP
+      summary: Change Onboarding Agent
+      description: Updates Onboarding Agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+                - active
+              properties:
+                mobile:
+                  type: string
+                  example: "251900000000"
+                active:
+                  type: string
+                  example: "1"
+      responses:
+          "201":
+            description: Resource Update successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Resource Updated successfully."
+          "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+          "500":
+            description: Internal server error. An unexpected error occurred on the server.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "An internal server error occurred."
+  /wfp/updatefoodcategorylist.php:
+    post:
+      tags:
+        - WFP
+      summary: Change Food Category List
+      description: Updates Food Category List.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+                - categoryList
+              properties:
+                mobile:
+                  type: string
+                  example: "251900000000"
+                categoryList:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Oil", "Vegetables", "Pulses", "Cereal", "Salt", "Fruits", "Cereals"]
+      responses:
+          "201":
+            description: Resource Update successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Resource Updated successfully."
+          "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+          "500":
+            description: Internal server error. An unexpected error occurred on the server.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "An internal server error occurred."
+  /wfp/cancelcycle.php:
+    post:
+      tags:
+        - WFP
+      summary: Delete a Cycle
+      description: Cancel Cycle.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cycleId
+              properties:
+                cycleId:
+                  type: string
+                  example: "Ywh8Epr6-CDd3-PgQs-BcRr-vtRYzr8GlTP4"
+      responses:
+          "201":
+            description: Resource Deleted successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Resource Deleted successfully."
+          "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+          "500":
+            description: Internal server error. An unexpected error occurred on the server.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "An internal server error occurred."
+  /wfp/transfercredit.php:
+    post:
+      tags:
+        - WFP
+      summary: Top-Up Creadit
+      description: Top-Up Creadit.
+      parameters:
+      - name: walletId
+        in: query
+        description: Unique ID of the wallet
+        required: true
+        schema:
+          type: string
+      - name: houseHoldId
+        in: query
+        description: Unique ID of the household
+        required: false
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: Pagination offset
+        required: false
+        schema:
+          type: integer
+          default: 0
+      - name: dateFrom
+        in: query
+        description: Start date filter (YYYY-MM-DD)
+        required: false
+        schema:
+          type: string
+          format: date
+          nullable: true
+      - name: dateTo
+        in: query
+        description: End date filter (YYYY-MM-DD)
+        required: false
+        schema:
+          type: string
+          format: date
+          nullable: true
+      - name: cycleFilter
+        in: query
+        description: Filter transactions by cycle (e.g., daily, weekly, monthly)
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Number of records per page
+        required: false
+        schema:
+          type: integer
+          default: 10
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - householdId
+              - cycle
+              properties:
+                householdId:
+                  type: string
+                  example: "Z876543210"
+                cycle:
+                  type: string
+                  example: "Ywh8Epr6-CDd3-PgQs-BcRr-vtRYzr8GlTP4"
+      responses:
+          "201":
+            description: Resource Deleted successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Resource Deleted successfully."
           "400":
             description: Bad request. The provided data is invalid or missing required fields.
             content:
