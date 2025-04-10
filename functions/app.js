@@ -1,22 +1,20 @@
-const express = require('express');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const path = require('path');
-const serverless = require('serverless-http');
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-const auth = require('../auth');
-const { console } = require('inspector');
+const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
+const path = require("path");
+const auth = require('../auth.js');
+const cors = require("cors");
+// Load the swagger.yaml file
+const swaggerDocument = YAML.load(path.join(__dirname, "swagger.yaml"));
 
 const app = express();
+const PORT = 5000;
 
 // Middleware setup
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const PORT = process.env.PORT || 5000;
-const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 
 // Updated Swagger auth middleware
 const swaggerAuthMiddleware = (req, res, next) => {
@@ -121,22 +119,10 @@ app.get('/protected', auth.verifyToken, (req, res) => {
 // Apply Swagger auth middleware
 app.use(swaggerAuthMiddleware);
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Swagger UI routes
-app.use('/.netlify/functions/api/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use('/api/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: true, message: 'Something went wrong!' });
-});
+app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Swagger UI available at http://localhost:${PORT}/api/api-docs`);
+  console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
 });
-
-module.exports.handler = serverless(app);
