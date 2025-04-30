@@ -15,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // Updated Swagger auth middleware
 const swaggerAuthMiddleware = (req, res, next) => {
   // Allow Swagger UI assets and login endpoint
@@ -116,9 +115,9 @@ app.get('/protected', auth.verifyToken, (req, res) => {
     user: req.user
   });
 });
+
 // Apply Swagger auth middleware
 app.use(swaggerAuthMiddleware);
-
 
 app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

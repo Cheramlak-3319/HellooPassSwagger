@@ -15,43 +15,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: JWT token obtained from the /authenticate endpoint
-  schemas:
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          type: boolean
-          example: true
-        message:
-          type: string
-          example: "Error description"
-    SuccessResponse:
-      type: object
-      properties:
-        error:
-          type: boolean
-          example: false
-        message:
-          type: string
-          example: "Success message"
-    AuthRequest:
-      type: object
-      required:
-        - username
-        - password
-      properties:
-        username:
-          type: string
-          example: "admin"
-        password:
-          type: string
-          example: "admin123"
-    AuthResponse:
-      type: object
-      properties:
-        token:
-          type: string
-          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3RhdHVzIjoidmFsaWQiLCJpYXQiOjE2MTYyMzkwMjJ9.1q2w3e4r5t6y7u8i9o0p"
 security:
 - bearerAuth: []
 tags:
