@@ -15,8 +15,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: JWT token obtained from the /authenticate endpoint
-security:
-- bearerAuth: []
 tags:
   - name: Authentication
     description: Endpoints for user authentication
@@ -26,40 +24,6 @@ tags:
     description: World Food Programme related operations
 
 paths:
-  /authenticate:
-    post:
-      tags:
-        - Authentication
-      summary: Authenticate user
-      description: Returns a JWT token for authenticated users
-      operationId: authenticateUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthRequest'
-      responses:
-        '200':
-          description: Authentication successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '401':
-          description: Invalid credentials
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      # Remove security for authentication endpoint
-      security: []      
   /dube/international/getmerchantlist.php:
     get:
       tags:
