@@ -2529,49 +2529,49 @@ paths:
                   message:
                     type: object
                     items:
-                        properties:
-                          numberOfActiveSalesAgents: 
-                            type: string
-                            example: "82"
-                          numberOfActiveRetailers: 
-                            type: number
-                            example: 77056
-                          totalInvoiceAmount: 
-                            type: string
-                            example: "2796"
-                          totalNumberOfInvoices: 
-                            type: string
-                            example: "77059"
-                          totalCreditAmountSalesAgents: 
-                            type: string
-                            example: "635"
-                          totalNumberOfCreditSalesAgents: 
-                            type: string
-                            example: "36307"
-                          totalCreditAmountRetailers: 
-                            type: string
-                            example: "537"
-                          totalNumberOfCreditRetailers: 
-                            type: string
-                            example: "137"
-                          totalRepayedAmount: 
-                            type: number
-                            example: 69255702.57
-                          totalNumberOfRepayment: 
-                            type: string
-                            example: "234669"
-                          totalUnpaidInvoicesAmount:
-                            type: string
-                            example: "234669"
-                          totalNumberOfUnpaidInvoices:
-                            type: number
-                            example: 234669
-                          totalOverdueInvoicesAmount:
-                            type: number
-                            example: 234669
-                          totalNumberOfOverdueInvoices:
-                            type: number
-                            example: 234669  
+                    properties:
+                      numberOfActiveSalesAgents: 
+                        type: string
+                        example: "82"
+                      numberOfActiveRetailers: 
+                        type: number
+                        example: 77056
+                      totalInvoiceAmount: 
+                        type: string
+                        example: "2796"
+                      totalNumberOfInvoices: 
+                        type: string
+                        example: "77059"
+                      totalCreditAmountSalesAgents: 
+                        type: string
+                        example: "635"
+                      totalNumberOfCreditSalesAgents: 
+                        type: string
+                        example: "36307"
+                      totalCreditAmountRetailers: 
+                        type: string
+                        example: "537"
+                      totalNumberOfCreditRetailers: 
+                        type: string
+                        example: "137"
+                      totalRepayedAmount: 
+                        type: number
+                        example: 69255702.57
+                      totalNumberOfRepayment: 
+                        type: string
+                        example: "234669"
+                      totalUnpaidInvoicesAmount:
+                        type: string
+                        example: "234669"
+                      totalNumberOfUnpaidInvoices:
+                        type: number
+                        example: 234669
+                      totalOverdueInvoicesAmount:
+                        type: number
+                        example: 234669
+                      totalNumberOfOverdueInvoices:
+                        type: number
+                        example: 234669  
         "400":
             description: Bad request. The provided data is invalid or missing required fields.
             content:
