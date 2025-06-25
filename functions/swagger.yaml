@@ -2527,8 +2527,8 @@ paths:
                     type: boolean
                     example: false
                   message:
-                    type: object
                     items:
+                      type: object
                       properties:
                         numberOfActiveSalesAgents: 
                           type: string
