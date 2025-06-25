@@ -1737,6 +1737,114 @@ paths:
                   message:
                     type: string
                     example: "An internal server error occurred."
+  /dube/international/gettotalsleapfrog.php:
+    get:
+      tags:
+        - Dube International
+      summary: Get All Users
+      description: Get an existing All Users
+      parameters:
+          - in: query
+            name: start
+            description: |
+              Start date or parameter for filtering
+              - Example: `"2024-01-01"`
+            required: false
+            schema:
+              type: string
+              format: date-time
+          - in: query
+            name: end
+            description: |
+              End date or parameter for filtering
+              - Example: `"2024-12-31"`
+            required: false
+            schema:
+              type: string
+              format: date-time
+      responses:
+        '200':
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  message:
+                    type: object
+                    items:
+                    properties:
+                      numberOfActiveSalesAgents: 
+                        type: string
+                        example: "82"
+                      numberOfActiveRetailers: 
+                        type: number
+                        example: 77056
+                      totalInvoiceAmount: 
+                        type: string
+                        example: "2796"
+                      totalNumberOfInvoices: 
+                        type: string
+                        example: "77059"
+                      totalCreditAmountSalesAgents: 
+                        type: string
+                        example: "635"
+                      totalNumberOfCreditSalesAgents: 
+                        type: string
+                        example: "36307"
+                      totalCreditAmountRetailers: 
+                        type: string
+                        example: "537"
+                      totalNumberOfCreditRetailers: 
+                        type: string
+                        example: "137"
+                      totalRepayedAmount: 
+                        type: number
+                        example: 69255702.57
+                      totalNumberOfRepayment: 
+                        type: string
+                        example: "234669"
+                      totalUnpaidInvoicesAmount:
+                        type: string
+                        example: "234669"
+                      totalNumberOfUnpaidInvoices:
+                        type: number
+                        example: 234669
+                      totalOverdueInvoicesAmount:
+                        type: number
+                        example: 234669
+                      totalNumberOfOverdueInvoices:
+                        type: number
+                        example: 234669  
+        "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+        "500":
+          description: Internal server error. An unexpected error occurred on the server.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "An internal server error occurred."
   /dube/getcashinandouttotals.php:
     get:
       tags:
@@ -2464,114 +2572,6 @@ paths:
                           type: string
                           format: date-time
                           example: "2024-11-15 14:46:27"
-        "400":
-            description: Bad request. The provided data is invalid or missing required fields.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: boolean
-                      example: true
-                    message:
-                      type: string
-                      example: "No content passed."
-        "500":
-          description: Internal server error. An unexpected error occurred on the server.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "An internal server error occurred."
-  /dube/international/gettotalsleapfrog.php:
-    get:
-      tags:
-        - Dube International
-      summary: Get All Users
-      description: Get an existing All Users
-      parameters:
-          - in: query
-            name: start
-            description: |
-              Start date or parameter for filtering
-              - Example: `"2024-01-01"`
-            required: false
-            schema:
-              type: string
-              format: date-time
-          - in: query
-            name: end
-            description: |
-              End date or parameter for filtering
-              - Example: `"2024-12-31"`
-            required: false
-            schema:
-              type: string
-              format: date-time
-      responses:
-        '200':
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: boolean
-                    example: false
-                  message:
-                    type: object
-                    items:
-                    properties:
-                      numberOfActiveSalesAgents: 
-                        type: string
-                        example: "82"
-                      numberOfActiveRetailers: 
-                        type: number
-                        example: 77056
-                      totalInvoiceAmount: 
-                        type: string
-                        example: "2796"
-                      totalNumberOfInvoices: 
-                        type: string
-                        example: "77059"
-                      totalCreditAmountSalesAgents: 
-                        type: string
-                        example: "635"
-                      totalNumberOfCreditSalesAgents: 
-                        type: string
-                        example: "36307"
-                      totalCreditAmountRetailers: 
-                        type: string
-                        example: "537"
-                      totalNumberOfCreditRetailers: 
-                        type: string
-                        example: "137"
-                      totalRepayedAmount: 
-                        type: number
-                        example: 69255702.57
-                      totalNumberOfRepayment: 
-                        type: string
-                        example: "234669"
-                      totalUnpaidInvoicesAmount:
-                        type: string
-                        example: "234669"
-                      totalNumberOfUnpaidInvoices:
-                        type: number
-                        example: 234669
-                      totalOverdueInvoicesAmount:
-                        type: number
-                        example: 234669
-                      totalNumberOfOverdueInvoices:
-                        type: number
-                        example: 234669  
         "400":
             description: Bad request. The provided data is invalid or missing required fields.
             content:
