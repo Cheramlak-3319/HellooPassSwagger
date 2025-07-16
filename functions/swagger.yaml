@@ -4782,8 +4782,8 @@ paths:
     post:
       tags:
         - WFP
-      summary: Top-Up Creadit
-      description: Top-Up Creadit.
+      summary: Validated Bursement
+      description: Validated Bursement.
       parameters:
       - name: walletId
         in: query
