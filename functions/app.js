@@ -8,7 +8,7 @@ const cors = require("cors");
 const swaggerDocument = YAML.load(path.join(__dirname, "swagger.yaml"));
 
 const app = express();
-const PORT = 5000;
+const PORT = 4000;
 
 // Middleware setup
 app.use(cors());

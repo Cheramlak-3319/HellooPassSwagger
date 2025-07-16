@@ -4778,3 +4778,114 @@ paths:
                     message:
                       type: string
                       example: "An internal server error occurred."
+  /wfp/validatedisbursement.php:
+    post:
+      tags:
+        - WFP
+      summary: Top-Up Creadit
+      description: Top-Up Creadit.
+      parameters:
+      - name: walletId
+        in: query
+        description: Unique ID of the wallet
+        required: true
+        schema:
+          type: string
+      - name: houseHoldId
+        in: query
+        description: Unique ID of the household
+        required: false
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: Pagination offset
+        required: false
+        schema:
+          type: integer
+          default: 0
+      - name: dateFrom
+        in: query
+        description: Start date filter (YYYY-MM-DD)
+        required: false
+        schema:
+          type: string
+          format: date
+          nullable: true
+      - name: dateTo
+        in: query
+        description: End date filter (YYYY-MM-DD)
+        required: false
+        schema:
+          type: string
+          format: date
+          nullable: true
+      - name: cycleFilter
+        in: query
+        description: Filter transactions by cycle (e.g., daily, weekly, monthly)
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Number of records per page
+        required: false
+        schema:
+          type: integer
+          default: 10
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - householdId
+              - cycle
+              properties:
+                householdId:
+                  type: string
+                  example: "Z876543210"
+                cycle:
+                  type: string
+                  example: "Ywh8Epr6-CDd3-PgQs-BcRr-vtRYzr8GlTP4"
+      responses:
+          "201":
+            description: Resource Deleted successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: "Resource Deleted successfully."
+          "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+          "500":
+            description: Internal server error. An unexpected error occurred on the server.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "An internal server error occurred."
