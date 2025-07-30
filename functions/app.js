@@ -2,41 +2,33 @@ const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const path = require("path");
-const cookieParser = require("cookie-parser");
+const auth = require('../auth.js');
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const auth = require("../auth.js"); // Your optimized auth module
+// Load the swagger.yaml file
+const swaggerDocument = YAML.load(path.join(__dirname, "swagger.yaml"));
 
 const app = express();
 const PORT = 4000;
 
-// JWT config
-const SECRET = process.env.JWT_SECRET || 'your-secret-key';
-
-// Load Swagger YAML
-const swaggerDocument = YAML.load(path.join(__dirname, "swagger.yaml"));
-
 // Middleware setup
 app.use(cors());
-app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Token extraction utility
-const extractToken = (req) => {
-  const header = req.headers.authorization || req.headers.Authorization;
-  if (header?.startsWith("Bearer ")) return header.split(" ")[1];
-  return req.cookies?.token;
-};
-
-// Swagger Authentication Middleware
+// Updated Swagger auth middleware
 const swaggerAuthMiddleware = (req, res, next) => {
-  const publicPaths = ['/login', '/api-docs', '/api/api-docs'];
-  if (publicPaths.some(p => req.path.startsWith(p))) return next();
+  // Allow Swagger UI assets and login endpoint
+  if (req.path.includes('/api-docs') || req.path === '/login') {
+    return next();
+  }
 
-  const token = extractToken(req);
+  // Check for existing token
+  const token = req.cookies?.token || 
+               req.headers.authorization?.split(' ')[1];
+
   if (!token) {
     if (req.accepts('html')) {
+      // Serve login form
       return res.send(`
         <!DOCTYPE html>
         <html>
@@ -61,46 +53,46 @@ const swaggerAuthMiddleware = (req, res, next) => {
         </html>
       `);
     }
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
+  // Verify token
   jwt.verify(token, SECRET, (err, decoded) => {
     if (err) {
       if (req.accepts('html')) {
         return res.redirect('/?error=Invalid+or+expired+token');
       }
-      return res.status(403).json({ error: "Invalid token" });
+      return res.status(403).json({ error: 'Invalid token' });
     }
-
+    
     req.user = decoded;
     next();
   });
 };
 
-// Login Route
-app.post("/login", (req, res) => {
+// Updated login route
+app.post('/login', (req, res) => {
   try {
     const { username, password } = req.body;
     const token = auth.authenticate(username, password);
-
-    res.cookie("token", token, {
+    
+    res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       maxAge: 3600000
     });
 
-    if (req.accepts("html")) {
-      return res.redirect("/api/api-docs");
+    // Redirect to protected content after login
+    if (req.accepts('html')) {
+      return res.redirect('/api/api-docs');
     }
-
+    
     res.json({ success: true, token });
   } catch (err) {
-    const errorMessage = encodeURIComponent(err.message);
-    if (req.accepts("html")) {
-      return res.redirect(`/?error=${errorMessage}`);
+    if (req.accepts('html')) {
+      return res.redirect(`/?error=${encodeURIComponent(err.message)}`);
     }
-
     res.status(401).json({
       success: false,
       error: err.message
@@ -108,30 +100,28 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Protected Test Route
-app.get("/protected", auth.verifyToken, (req, res) => {
-  if (req.accepts("html")) {
+// Protected route with HTML response option
+app.get('/protected', auth.verifyToken, (req, res) => {
+  if (req.accepts('html')) {
     return res.send(`
       <h1>Protected Content</h1>
       <p>Welcome ${req.user.username}!</p>
       <a href="/api/api-docs">View API Documentation</a>
     `);
   }
-
+  
   res.json({
     success: true,
     user: req.user
   });
 });
 
-// Apply Swagger Auth Middleware
+// Apply Swagger auth middleware
 app.use(swaggerAuthMiddleware);
 
-// Serve Swagger
 app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Start Server
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`📘 Swagger available at http://localhost:${PORT}/api/api-docs`);
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
 });
