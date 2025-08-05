@@ -2501,9 +2501,9 @@ paths:
   /dube/international/customerselfregistration.php:
     post:
       tags:
-        - DUBE
-      summary: Customer Self Registriation
-      description: Customer Self Registriation.
+        - Dube International
+      summary: Change User PhoneNumber
+      description: Update User PhoneNumber.
       requestBody:
         required: true
         content:
@@ -2511,9 +2511,9 @@ paths:
             schema:
               type: object
               required:
-              - mobile
-              - fullName
-              - dialCode
+                - mobile
+                - fullName
+                - dialCode
               properties:
                 fullName:
                   type: string
