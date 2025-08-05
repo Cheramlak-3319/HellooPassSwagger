@@ -4889,3 +4889,65 @@ paths:
                     message:
                       type: string
                       example: "An internal server error occurred."
+  /wfp/registerhealthofficer.php:
+    post:
+      tags:
+        - WFP
+      summary: Health Officer Registriation
+      description: Health Officer Registriation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - hoName
+              - hoMobile
+              properties:
+                hoName:
+                  type: string
+                  example: "Zemedkun Alemu"
+                hoMobile:
+                  type: string
+                  example: "+25191234567"
+      responses:
+          "201":
+            description: User Register Successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: false
+                    message:
+                      type: string
+                      example: User Register Successfully.
+          "400":
+            description: Bad request. The provided data is invalid or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "No content passed."
+          "500":
+            description: Internal server error. An unexpected error occurred on the server.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: boolean
+                      example: true
+                    message:
+                      type: string
+                      example: "An internal server error occurred."
