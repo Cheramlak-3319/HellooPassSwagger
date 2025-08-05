@@ -2958,8 +2958,8 @@ paths:
     post:
       tags:
         - Dube International
-      summary: Change User PhoneNumber
-      description: Update User PhoneNumber.
+      summary: Customer Self Registiration.
+      description: Customer Self Registiration.
       requestBody:
         required: true
         content:
