@@ -2954,6 +2954,72 @@ paths:
                   message:
                     type: string
                     example: "An internal server error occurred."
+  /dube/international/customerselfregistration.php:
+    post:
+      tags:
+        - Dube International
+      summary: Change User PhoneNumber
+      description: Update User PhoneNumber.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile
+                - fullName
+                - dialCode
+              properties:
+                fullName:
+                  type: string
+                  example: "Zemedkun Alemu"
+                mobile:
+                  type: string
+                  example: "+25191234567"
+                dialCode:
+                  type: string
+                  example: "ET"
+    responses:
+        "201":
+          description: User Register Successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: User Register Successfully.
+        "400":
+          description: Bad request. The provided data is invalid or missing required fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "No content passed."
+        "500":
+          description: Internal server error. An unexpected error occurred on the server.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "An internal server error occurred."
   /wfp/generatedummyvouchers.php:
     get:
       tags:
